@@ -85,7 +85,21 @@ MAE 與 RMSE 使用各資料集目標的原始單位，不宜直接跨資料集�
 
 ### 特徵數量比較
 
-使用訓練資料的單變量 F 分數排序編碼後特徵，逐步增加特徵數量。50 Startups 的 State 採 `drop='first'` 編碼，三個數值欄位加兩個州別編碼，共五個特徵；Boston Housing 共十三個特徵。
+網頁可切換五種特徵選取方法，也可用 **Compare All 5 Methods** 同時比較曲線與指定特徵數的結果。每種方法皆只使用訓練資料選取特徵，再重新擬合 OLS；方法、特徵數、係數與即時預測會連動更新。比較全部時顯示五方法結果表，係數與預測則在單一方法模式使用。
+
+| 方法 | 選取方式 |
+| --- | --- |
+| Lasso | 標準化輸入與目標，按 L1 係數絕對值排序，alpha=0.01 |
+| Forward SFS | 每次加入使五折訓練集 CV MSE 最小的特徵 |
+| RFE | 以標準化線性迴歸係數反覆移除特徵 |
+| ElasticNet | 按正則化係數絕對值排序，alpha=0.01、l1_ratio=0.5 |
+| Exhaustive Search | 枚舉每個特徵數的全部組合，以五折訓練集 CV MSE 選取 |
+
+Lasso／ElasticNet 係數為零或同分時，以訓練資料 F 分數排序。兩者用於特徵排序，網頁係數與即時預測使用選取後重新擬合的 OLS，而非正則化模型。
+
+50 Startups 共五個編碼後特徵；Boston Housing 共十三個，精確窮舉 8,191 個非空組合。程式將 Exhaustive Search 限制於最多十三個編碼後特徵。既有 `feature_comparison.csv` 與圖表保留 F 分數排序結果；網頁五種方法使用新輸出的 `feature_methods.csv`。
+
+Training CV RMSE 為已選定特徵組合的分數；搜尋後可能偏樂觀，並非巢狀交叉驗證的無偏評估。
 
 測試集曲線為探索性比較，不用來選擇正式模型的特徵數，也不能單憑曲線認定過度擬合。保存的模型仍使用全部指定特徵。
 
@@ -109,6 +123,7 @@ Linear Regression、Ridge、LASSO、Elastic Net、SVR（RBF）、SVR（Linear）
 | `data_summary.csv`、`coefficients.csv` | 資料摘要與全特徵模型係數 |
 | `test_predictions.csv`、`regression_diagnostics.png` | 測試預測、殘差與診斷圖 |
 | `feature_comparison.csv`、`feature_comparison_table.png`、`feature_performance.png` | 特徵數量比較表與折線圖 |
+| `feature_methods.csv` | 五種選取方法在每個特徵數下的所選特徵、訓練 CV RMSE 與測試指標 |
 | `model_comparison.csv`、`model_comparison_table.png`、`model_comparison.png` | 多模型評估表與預測比較圖 |
 | `model_comparison_predictions.csv` | 各比較模型的逐筆測試預測 |
 | `model.joblib`、`prediction_input.csv` | 完整線性模型 Pipeline 與一列輸入示例 |
@@ -124,14 +139,14 @@ Linear Regression、Ridge、LASSO、Elastic Net、SVR（RBF）、SVR（Linear）
 .\.venv\Scripts\python.exe export_site.py
 ```
 
-匯出程式更新 `site/dist/` 的資料，再同步到 GitHub Pages 使用的 `docs/`。`site/` 是忽略追蹤的本機工作目錄；第一次從 GitHub clone 執行時，匯出程式會從 `docs/` 複製 HTML、CSS 與 JavaScript。
+匯出程式從追蹤中的 `docs/` 複製版面至 `site/dist/`，更新分析資料，再同步回 GitHub Pages 使用的 `docs/`。`site/` 是忽略追蹤的本機工作目錄。
 
-如需修改版面：已有 `site/dist/` 時，編輯該目錄中的 `index.html`、`styles.css`、`app.js`，再匯出；若尚未建立該目錄，可先修改 `docs/` 中對應檔案。
+如需修改版面，請編輯 `docs/index.html`、`docs/styles.css` 與 `docs/app.js`，再執行匯出。`docs/` 為版面來源，避免被舊的本機 Sites 檔案覆蓋。
 
 確認網頁後提交並推送：
 
 ```powershell
-git add main.py export_site.py docs README.md
+git add main.py feature_selection.py export_site.py docs README.md requirements.md
 git commit -m "Update regression report website"
 git push origin main
 ```

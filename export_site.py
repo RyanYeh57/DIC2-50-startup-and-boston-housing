@@ -10,10 +10,9 @@ def build_site():
     import pandas as pd
     destination = ROOT / 'site' / 'dist'
     destination.mkdir(parents=True, exist_ok=True)
-    # The independent Sites checkout is ignored; a fresh GitHub clone uses docs.
+    # Tracked docs templates are authoritative, including in a fresh clone.
     for filename in ('index.html', 'styles.css', 'app.js'):
-        if not (destination / filename).exists():
-            shutil.copy2(ROOT / 'docs' / filename, destination / filename)
+        shutil.copy2(ROOT / 'docs' / filename, destination / filename)
     data = {}
     for name, title in [('startups', '50 Startups'), ('boston', 'Boston Housing')]:
         source = ROOT / 'outputs' / name

@@ -263,6 +263,11 @@ def analyze(path, name, output, show=False):
         plt.close(fig)
 
     # 6. Deployment: save/reload the full pipeline and verify its predictions.
+    from feature_selection import compare_feature_methods
+    print(f'[{name}] Computing five feature-selection methods...', flush=True)
+    feature_methods = compare_feature_methods(
+        model.named_steps['preprocess'], X_train, X_test, y_train, y_test, output,
+    )
     model_comparison = compare_models(
         X_train, X_test, y_train, y_test, model.named_steps['preprocess'],
         name, output, show,
@@ -285,6 +290,8 @@ def analyze(path, name, output, show=False):
         'model_comparison_note': 'Default model configurations, trained on identical training data; test ranking is descriptive and not used to select the saved model. All predictors used; plot lines connect sorted test predictions, not a one-variable response curve.',
         'feature_comparison': comparison,
         'browser_feature_models': browser_models,
+        'feature_methods': feature_methods,
+        'feature_methods_note': 'Five training-only selection methods with OLS refit. Forward SFS and Exhaustive optimize training CV MSE; test metrics are descriptive. CV of a fixed selected subset is not nested CV and may be optimistic after search. Saved deployment model remains full-feature OLS.',
         'browser_preprocessing': {
             'numeric': numeric,
             'numeric_medians': dict(zip(numeric, model.named_steps['preprocess'].named_transformers_['numeric'].statistics_.tolist())),

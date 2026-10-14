@@ -75,6 +75,7 @@ python -m venv .venv
 | test_predictions.csv | 測試資料實際值、預測值及殘差 |
 | regression_diagnostics.png | 實際值對預測值圖與殘差圖 |
 | feature_comparison.csv | 各特徵數量的所選特徵、測試 RMSE 與 R-squared |
+| feature_methods.csv | Lasso、Forward SFS、RFE、ElasticNet、Exhaustive Search 的各特徵數結果 |
 | feature_comparison_table.png | 特徵數量比較表格圖片 |
 | feature_performance.png | RMSE 與 R-squared 隨特徵數量變化的雙折線圖 |
 | model_comparison.png | 測試資料實際值及十種模型配置的預測比較圖 |

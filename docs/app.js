@@ -3,9 +3,20 @@ const $ = id => document.getElementById(id);
 const escapeHTML = value => String(value).replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
 const fmt = (value, digits=2) => Number(value).toLocaleString('en-US', {maximumFractionDigits:digits, minimumFractionDigits:digits});
 const colors = ['#635bde','#19a58f','#e49c39','#db638c','#488fce','#8263b4','#bb7652','#44a6b2','#90a241','#d45c50'];
-let dataset = 'startups', count = 2, visibleModels = new Set();
+let dataset = 'startups', count = 2, method = 'Lasso', visibleModels = new Set();
+const methodNames = ['Lasso','Forward SFS','RFE','ElasticNet','Exhaustive'];
+const methodLabels = ['Lasso (L1 Ranking)','Forward SFS','RFE','ElasticNet','Exhaustive Search'];
+const methodBadges = ['L1 Ranking','Greedy','Backward','L1 + L2','Best Subset'];
+const methodDescriptions = {
+  'Lasso': '標準化輸入與目標後，以 Lasso 係數絕對值排序（alpha = 0.01）。零值與同分以訓練集 F 分數排序。',
+  'Forward SFS': '從零個特徵開始，每次加入能使五折訓練集 CV MSE 最小的特徵。',
+  'RFE': '以標準化線性迴歸的係數反覆移除最弱特徵，直到保留指定數量。',
+  'ElasticNet': '以標準化 ElasticNet 係數絕對值排序（alpha = 0.01，l1_ratio = 0.5），同分以訓練集 F 分數排序。',
+  'Exhaustive': '枚舉指定特徵數的所有組合，以五折訓練集 CV MSE 選擇最佳組合。',
+  'ALL': '同時比較五種方法的測試曲線與當前特徵數結果。切回單一方法即可查看係數與即時預測。'
+};
 const current = () => window.REPORT_DATA[dataset];
-const selected = () => current().browser_feature_models.find(model => model.count === count);
+const selected = () => method === 'ALL' ? null : current().feature_methods[method].models.find(model => model.count === count);
 
 // Dependency-free SVG charts remain available offline and when opened as a file.
 function chart(element, series, options={}) {
@@ -36,8 +47,10 @@ function chart(element, series, options={}) {
     if(item.dots!==false) for(const p of points) markup+=`<circle class="svg-point" cx="${sx(p.x)}" cy="${sy(p.y)}" r="${options.wide?3:4}" fill="${item.color}" stroke="white" stroke-width="1.2" ${options.counts?`data-count="${p.x}" tabindex="0" role="button" aria-label="選取 ${p.x} 個特徵"`:''}><title>${escapeHTML(item.name)} · ${options.xlabel || 'x'}: ${fmt(p.x)} · ${fmt(p.y,4)}</title></circle>`;
   }
   if(options.counts) {
-    const p=series[0].points.find(p=>p.x===count);
-    if(p) markup+=`<circle cx="${sx(p.x)}" cy="${sy(p.y)}" r="8" fill="none" stroke="${series[0].color}" stroke-width="2"/>`;
+    for(const item of series) {
+      const p=item.points.find(p=>p.x===count);
+      if(p) markup+=`<circle cx="${sx(p.x)}" cy="${sy(p.y)}" r="8" fill="none" stroke="${item.color}" stroke-width="2"/>`;
+    }
   }
   markup+=`<text x="${(width+margin.left)/2}" y="${height-7}" text-anchor="middle" fill="#7a879c" font-size="10">${escapeHTML(options.xlabel || '')}</text><text x="14" y="${height/2}" transform="rotate(-90 14 ${height/2})" text-anchor="middle" fill="#7a879c" font-size="10">${escapeHTML(options.ylabel || '')}</text></svg>`;
   element.innerHTML=markup;
@@ -49,15 +62,30 @@ function chart(element, series, options={}) {
 }
 
 function renderFeatures() {
-  const data=current(), model=selected();
-  $('feature-buttons').innerHTML=data.browser_feature_models.map(m=>`<button data-count="${m.count}" class="${m.count===count?'active':''}" aria-pressed="${m.count===count}">k = ${m.count}</button>`).join('');
+  const data=current(), model=selected(), all=method==='ALL';
+  const activeMethods=all?methodNames:[method];
+  $('method-buttons').innerHTML=methodNames.map((name,i)=>`<button data-method="${name}" class="${method===name?'active':''}" aria-pressed="${method===name}"><span class="method-symbol">${['▼','↗','✂','≋','⌕'][i]}</span>${methodLabels[i]}<span class="method-badge">${methodBadges[i]}</span></button>`).join('')+`<button data-method="ALL" class="compare-methods ${all?'active':''}" aria-pressed="${all}">▱ Compare All 5 Methods</button>`;
+  $('method-buttons').querySelectorAll('button').forEach(button=>button.addEventListener('click',()=>{method=button.dataset.method;renderFeatures();}));
+  $('method-description').textContent=methodDescriptions[method]+(all?'':' 選取完成後重新擬合 OLS，以下圖表使用獨立測試集。');
+  $('method-tag').textContent=all?'All 5 Methods':method+' · OLS refit';
+  $('feature-buttons').innerHTML=data.feature_methods.Lasso.models.map(m=>`<button data-count="${m.count}" class="${m.count===count?'active':''}" aria-pressed="${m.count===count}">k = ${m.count}</button>`).join('');
   $('feature-buttons').querySelectorAll('button').forEach(button=>button.addEventListener('click',()=>{count=Number(button.dataset.count);renderFeatures();}));
-  $('selected-features').innerHTML=model.features.map(feature=>`<span class="feature-chip">${escapeHTML(feature)}</span>`).join('');
-  chart($('rmse-chart'), [{name:'Test RMSE',color:colors[0],points:data.browser_feature_models.map(m=>({x:m.count,y:m.metrics.RMSE}))}], {label:'RMSE by Number of Features',counts:true,xlabel:'Number of Features'});
-  chart($('r2-chart'), [{name:'Test R²',color:colors[1],points:data.browser_feature_models.map(m=>({x:m.count,y:m.metrics.R2}))}], {label:'R-squared by Number of Features',counts:true,xlabel:'Number of Features',precision:3});
-  $('selection-summary').innerHTML=`<span>目前選擇 <strong>${count}</strong> 個編碼後特徵</span><span>Test RMSE <strong>${fmt(model.metrics.RMSE)}</strong>　 R² <strong>${fmt(model.metrics.R2,4)}</strong>　 MAE <strong>${fmt(model.metrics.MAE)}</strong></span>`;
-  $('coefficients').innerHTML=`<tr><td>Intercept</td><td>${fmt(model.intercept,4)}</td></tr>`+model.features.map((feature,i)=>`<tr><td>${escapeHTML(feature)}</td><td>${fmt(model.coefficients[i],6)}</td></tr>`).join('');
-  predict();
+  $('selected-features').innerHTML=all?'<span class="muted">各方法選取的特徵列於下方比較表。</span>':model.features.map(feature=>`<span class="feature-chip">${escapeHTML(feature)}</span>`).join('');
+  $('feature-method-legend').innerHTML=all?methodNames.map((name,i)=>`<span class="method-legend-item"><span style="background:${colors[i]}"></span>${name}</span>`).join(''):'';
+  const series=metric=>activeMethods.map(name=>({name,color:colors[methodNames.indexOf(name)],points:data.feature_methods[name].models.map(m=>({x:m.count,y:m.metrics[metric]}))}));
+  chart($('rmse-chart'),series('RMSE'),{label:'RMSE by Number of Features',counts:true,xlabel:'Number of Features',ylabel:'Test RMSE'});
+  chart($('r2-chart'),series('R2'),{label:'R-squared by Number of Features',counts:true,xlabel:'Number of Features',ylabel:'Test R-squared',precision:3});
+  $('predictor-grid').hidden=all;
+  $('method-comparison-card').hidden=!all;
+  if(all) {
+    $('selection-summary').innerHTML=`<span>比較五種方法 · 每個模型 <strong>${count}</strong> 個特徵</span><span>特徵選取只使用訓練集，表中為獨立測試結果。</span>`;
+    $('method-comparison-count').textContent=`k = ${count}`;
+    $('method-comparison-table').innerHTML=methodNames.map(name=>{const row=data.feature_methods[name].models.find(m=>m.count===count);return `<tr><td>${name}</td><td>${escapeHTML(row.features.join(', '))}</td><td>${fmt(row.training_cv_RMSE)}</td><td>${fmt(row.metrics.RMSE)}</td><td>${fmt(row.metrics.R2,4)}</td></tr>`;}).join('');
+  } else {
+    $('selection-summary').innerHTML=`<span><strong>${method}</strong> · ${count} 個特徵</span><span>Training CV RMSE <strong>${fmt(model.training_cv_RMSE)}</strong>　Test RMSE <strong>${fmt(model.metrics.RMSE)}</strong>　R² <strong>${fmt(model.metrics.R2,4)}</strong></span>`;
+    $('coefficients').innerHTML=`<tr><td>Intercept</td><td>${fmt(model.intercept,4)}</td></tr>`+model.features.map((feature,i)=>`<tr><td>${escapeHTML(feature)}</td><td>${fmt(model.coefficients[i],6)}</td></tr>`).join('');
+    predict();
+  }
 }
 
 function renderInputs() {
@@ -101,7 +129,7 @@ function render() {
   $('target-tag').textContent=dataset==='startups'?'Target: Profit':'Target: MEDV';
   const cards=[['R-SQUARED',fmt(metrics.R2,4),'Test set · explained variance','↗'],['RMSE',fmt(metrics.RMSE),'Test set · original target units','∿'],['MAE',fmt(metrics.MAE),'Test set · mean absolute error','±'],['CV RMSE',fmt(data.training_cv_RMSE_mean),`5 folds · ± ${fmt(data.training_cv_RMSE_std)}`,'▤']];
   $('metrics').innerHTML=cards.map(([label,value,sub,icon])=>`<article class="metric"><span>${label}</span><span class="metric-icon">${icon}</span><strong>${value}</strong><small>${sub}</small></article>`).join('');
-  for(const [id,file] of [['feature-download','feature_comparison.csv'],['model-download','model_comparison.csv'],['prediction-download','test_predictions.csv'],['report-download','report.json']]) $(id).href=`assets/${dataset}/${file}`;
+  for(const [id,file] of [['feature-download','feature_methods.csv'],['model-download','model_comparison.csv'],['prediction-download','test_predictions.csv'],['report-download','report.json']]) $(id).href=`assets/${dataset}/${file}`;
   renderInputs();renderFeatures();renderModels();
   chart($('actual-chart'),[{name:'Test observation',color:colors[0],line:false,points:data.test_predictions.map(row=>({x:row.actual,y:row.predicted}))}],{label:'Actual vs Predicted',xlabel:'Actual target',diagonal:true});
   chart($('residual-chart'),[{name:'Test residual',color:colors[1],line:false,points:data.test_predictions.map(row=>({x:row.predicted,y:row.residual}))}],{label:'Residuals vs Predicted',xlabel:'Predicted target',zero:true});
