@@ -1008,5 +1008,22 @@
     "Administration": 135495.07,
     "Marketing Spend": 252664.93,
     "State": "California"
+  },
+  "input_ranges": {
+    "R&D Spend": {
+      "min": 0.0,
+      "max": 165349.2,
+      "step": 0.01
+    },
+    "Administration": {
+      "min": 51283.14,
+      "max": 182645.56,
+      "step": 0.01
+    },
+    "Marketing Spend": {
+      "min": 0.0,
+      "max": 471784.1,
+      "step": 0.01
+    }
   }
 }

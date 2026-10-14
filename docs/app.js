@@ -90,8 +90,27 @@ function renderFeatures() {
 
 function renderInputs() {
   const data=current(), prep=data.browser_preprocessing;
-  $('predictor-inputs').innerHTML=prep.numeric.map((field,i)=>`<label>${escapeHTML(field)}<input type="number" step="any" required name="${escapeHTML(field)}" id="input-${i}" value="${Number(data.example[field]).toFixed(4)}"></label>`).join('')+prep.categorical.map(field=>`<label>${escapeHTML(field)}<select name="${escapeHTML(field)}">${prep.categories[field].map(value=>`<option value="${escapeHTML(value)}" ${value===data.example[field]?'selected':''}>${escapeHTML(value)}</option>`).join('')}</select></label>`).join('');
+  $('predictor-inputs').innerHTML=prep.numeric.map((field,i)=>{
+    const range=data.input_ranges[field], value=Number(data.example[field]);
+    return `<div class="range-field"><div class="range-heading"><label for="input-${i}">${escapeHTML(field)}</label><input type="number" step="any" required name="${escapeHTML(field)}" id="input-${i}" data-range-index="${i}" value="${value}" aria-label="${escapeHTML(field)} 精確數值"></div><input type="range" id="range-${i}" data-range-index="${i}" min="${range.min}" max="${range.max===range.min?range.min+range.step:range.max}" step="${range.step}" value="${value}" aria-label="${escapeHTML(field)} 滑桿"><div class="range-bounds"><span>${fmt(range.min,range.step<0.01?4:2)}</span><span>${fmt(range.max,range.step<0.01?4:2)}</span></div></div>`;
+  }).join('')+prep.categorical.map(field=>`<label>${escapeHTML(field)}<select name="${escapeHTML(field)}">${prep.categories[field].map(value=>`<option value="${escapeHTML(value)}" ${value===data.example[field]?'selected':''}>${escapeHTML(value)}</option>`).join('')}</select></label>`).join('');
   $('prediction-label').textContent=dataset==='startups'?'預測 Profit':'預測 MEDV（原始資料單位）';
+}
+
+function handlePredictorInput(event) {
+  const target=event.target, index=target.dataset.rangeIndex;
+  if(index!==undefined) {
+    const number=$(`input-${index}`), slider=$(`range-${index}`);
+    if(target.type==='range') number.value=slider.value;
+    else if(target.value.trim()!=='' && Number.isFinite(Number(target.value))) {
+      const value=Number(target.value);
+      // Keep exact manual input, including values beyond the observed bounds.
+      slider.min=String(Math.min(Number(slider.min),value));
+      slider.max=String(Math.max(Number(slider.max),value));
+      slider.value=String(value);
+    }
+  }
+  predict();
 }
 
 function predict() {
@@ -140,6 +159,6 @@ function render() {
 
 document.querySelectorAll('[data-dataset]').forEach(button=>button.addEventListener('click',()=>{dataset=button.dataset.dataset;count=Math.min(2,current().browser_feature_models.length);visibleModels=new Set(current().model_comparison.map(row=>row.Model));render();}));
 $('predictor').addEventListener('submit',event=>{event.preventDefault();predict();});
-$('predictor').addEventListener('input',predict);
+$('predictor').addEventListener('input',handlePredictorInput);
 visibleModels=new Set(current().model_comparison.map(row=>row.Model));
 render();

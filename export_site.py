@@ -23,6 +23,14 @@ def build_site():
         report['test_predictions'] = pd.read_csv(source / 'test_predictions.csv').to_dict('records')
         report['model_predictions'] = pd.read_csv(source / 'model_comparison_predictions.csv').to_dict('records')
         report['example'] = pd.read_csv(source / 'prediction_input.csv').iloc[0].to_dict()
+        summary = pd.read_csv(source / 'data_summary.csv', index_col=0)
+        report['input_ranges'] = {}
+        for field in report['browser_preprocessing']['numeric']:
+            minimum = float(summary.loc['min', field])
+            maximum = float(summary.loc['max', field])
+            span = maximum - minimum
+            step = 1 if field in ('CHAS', 'RAD', 'TAX') else 0.0001 if span < 1 else 0.01
+            report['input_ranges'][field] = {'min': minimum, 'max': maximum, 'step': step}
         data[name] = report
         assets = destination / 'assets' / name
         assets.mkdir(parents=True, exist_ok=True)
