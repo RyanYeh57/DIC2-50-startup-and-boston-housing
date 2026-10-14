@@ -1,0 +1,6 @@
+Number of Features,Selected Features,RMSE,R-squared
+1,[R&D Spend],7714.334890830185,0.9265108109341951
+2,"[R&D Spend, Marketing Spend]",8206.32881316585,0.9168381183550247
+3,"[R&D Spend, Marketing Spend, State_New York]",8242.782649484654,0.9160976403529224
+4,"[R&D Spend, Marketing Spend, State_New York, State_Florida]",8254.686589386352,0.9158551276280779
+5,"[R&D Spend, Marketing Spend, State_New York, State_Florida, Administration]",9055.95732345848,0.8987266414328634

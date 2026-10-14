@@ -1,0 +1,27 @@
+# Python caches and virtual environments
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# Local secrets
+.env
+.env.*
+!.env.example
+.aws/
+
+# Generated model and diagnostics
+*.joblib
+regression_diagnostics.png
+
+# Operating system files
+.DS_Store
+Thumbs.db
+outputs/
+site-deployment.tar.gz
+reference-site.html

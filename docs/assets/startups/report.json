@@ -1,0 +1,479 @@
+{
+  "dataset": "startups",
+  "objective": "Predict startup profit from spending and state.",
+  "success_criterion": "Test RMSE below training-mean baseline (exploratory).",
+  "original_rows": 50,
+  "usable_rows": 50,
+  "duplicate_rows": 0,
+  "missing_values_before_cleaning": {
+    "R&D Spend": 0,
+    "Administration": 0,
+    "Marketing Spend": 0,
+    "State": 0,
+    "Profit": 0
+  },
+  "train_rows": 40,
+  "test_rows": 10,
+  "training_cv_RMSE_mean": 9550.67610568526,
+  "training_cv_RMSE_std": 2936.122709811375,
+  "test_metrics": {
+    "R2": 0.8987266414328636,
+    "MAE": 6961.477813252383,
+    "RMSE": 9055.95732345847
+  },
+  "baseline_test_metrics": {
+    "R2": -0.40883682176454883,
+    "MAE": 25295.290200000007,
+    "RMSE": 33776.691540126405
+  },
+  "model_comparison": [
+    {
+      "Model": "Mutual Information + Linear",
+      "Features": "R&D Spend, Administration, Marketing Spend, State",
+      "MSE": 67943465.8066034,
+      "RMSE": 8242.782649482115,
+      "R2 Score": 0.916097640352974
+    },
+    {
+      "Model": "Gradient Boosting",
+      "Features": "R&D Spend, Administration, Marketing Spend, State",
+      "MSE": 68696602.25561532,
+      "RMSE": 8288.341345264162,
+      "R2 Score": 0.915167603528121
+    },
+    {
+      "Model": "LASSO",
+      "Features": "R&D Spend, Administration, Marketing Spend, State",
+      "MSE": 75215885.43697992,
+      "RMSE": 8672.709232816464,
+      "R2 Score": 0.9071170392004105
+    },
+    {
+      "Model": "SVR (Linear)",
+      "Features": "R&D Spend, Administration, Marketing Spend, State",
+      "MSE": 77765009.24455671,
+      "RMSE": 8818.447099379613,
+      "R2 Score": 0.9039691647146301
+    },
+    {
+      "Model": "Elastic Net",
+      "Features": "R&D Spend, Administration, Marketing Spend, State",
+      "MSE": 78886782.52972175,
+      "RMSE": 8881.823153481595,
+      "R2 Score": 0.9025839038290249
+    },
+    {
+      "Model": "Random Forest",
+      "Features": "R&D Spend, Administration, Marketing Spend, State",
+      "MSE": 79051569.42536442,
+      "RMSE": 8891.094950868786,
+      "R2 Score": 0.9023804109806811
+    },
+    {
+      "Model": "Linear Regression",
+      "Features": "R&D Spend, Administration, Marketing Spend, State",
+      "MSE": 82010363.04501359,
+      "RMSE": 9055.957323497809,
+      "R2 Score": 0.8987266414319838
+    },
+    {
+      "Model": "Ridge",
+      "Features": "R&D Spend, Administration, Marketing Spend, State",
+      "MSE": 84731799.39480999,
+      "RMSE": 9204.987745500262,
+      "R2 Score": 0.8953659807905757
+    },
+    {
+      "Model": "PCA + Linear Regression",
+      "Features": "R&D Spend, Administration, Marketing Spend, State",
+      "MSE": 331737808.61837786,
+      "RMSE": 18213.67092648755,
+      "R2 Score": 0.5903419909952508
+    },
+    {
+      "Model": "SVR (RBF)",
+      "Features": "R&D Spend, Administration, Marketing Spend, State",
+      "MSE": 405305423.50216067,
+      "RMSE": 20132.198675310174,
+      "R2 Score": 0.49949445460488395
+    }
+  ],
+  "model_comparison_note": "Default model configurations, trained on identical training data; test ranking is descriptive and not used to select the saved model. All predictors used; plot lines connect sorted test predictions, not a one-variable response curve.",
+  "feature_comparison": [
+    {
+      "Number of Features": 1,
+      "Selected Features": "[R&D Spend]",
+      "RMSE": 7714.334890830185,
+      "R-squared": 0.9265108109341951
+    },
+    {
+      "Number of Features": 2,
+      "Selected Features": "[R&D Spend, Marketing Spend]",
+      "RMSE": 8206.32881316585,
+      "R-squared": 0.9168381183550247
+    },
+    {
+      "Number of Features": 3,
+      "Selected Features": "[R&D Spend, Marketing Spend, State_New York]",
+      "RMSE": 8242.782649484654,
+      "R-squared": 0.9160976403529224
+    },
+    {
+      "Number of Features": 4,
+      "Selected Features": "[R&D Spend, Marketing Spend, State_New York, State_Florida]",
+      "RMSE": 8254.686589386352,
+      "R-squared": 0.9158551276280779
+    },
+    {
+      "Number of Features": 5,
+      "Selected Features": "[R&D Spend, Marketing Spend, State_New York, State_Florida, Administration]",
+      "RMSE": 9055.95732345848,
+      "R-squared": 0.8987266414328634
+    }
+  ],
+  "browser_feature_models": [
+    {
+      "count": 1,
+      "features": [
+        "R&D Spend"
+      ],
+      "coefficients": [
+        0.8536091075148801
+      ],
+      "intercept": 49336.66803799113,
+      "metrics": {
+        "R2": 0.9265108109341951,
+        "MAE": 6077.363300620399,
+        "RMSE": 7714.334890830185
+      }
+    },
+    {
+      "count": 2,
+      "features": [
+        "R&D Spend",
+        "Marketing Spend"
+      ],
+      "coefficients": [
+        0.7833743148902919,
+        0.039239787145531516
+      ],
+      "intercept": 45542.392477514295,
+      "metrics": {
+        "R2": 0.9168381183550247,
+        "MAE": 6469.181721468585,
+        "RMSE": 8206.32881316585
+      }
+    },
+    {
+      "count": 3,
+      "features": [
+        "R&D Spend",
+        "Marketing Spend",
+        "State_New York"
+      ],
+      "coefficients": [
+        0.784129834017711,
+        0.03914520909769928,
+        -510.45738989726595
+      ],
+      "intercept": 45671.892974690796,
+      "metrics": {
+        "R2": 0.9160976403529224,
+        "MAE": 6430.578356776379,
+        "RMSE": 8242.782649484654
+      }
+    },
+    {
+      "count": 4,
+      "features": [
+        "R&D Spend",
+        "Marketing Spend",
+        "State_New York",
+        "State_Florida"
+      ],
+      "coefficients": [
+        0.7847451770120659,
+        0.038299664234207394,
+        -159.40852909993887,
+        664.588210011339
+      ],
+      "intercept": 45476.726283375494,
+      "metrics": {
+        "R2": 0.9158551276280779,
+        "MAE": 6454.510107276787,
+        "RMSE": 8254.686589386352
+      }
+    },
+    {
+      "count": 5,
+      "features": [
+        "R&D Spend",
+        "Marketing Spend",
+        "State_New York",
+        "State_Florida",
+        "Administration"
+      ],
+      "coefficients": [
+        0.8056300637153675,
+        0.02985544292263387,
+        6.9877599669804935,
+        938.7930061484291,
+        -0.06878788227713367
+      ],
+      "intercept": 54028.039593646026,
+      "metrics": {
+        "R2": 0.8987266414328634,
+        "MAE": 6961.477813252391,
+        "RMSE": 9055.95732345848
+      }
+    }
+  ],
+  "browser_preprocessing": {
+    "numeric": [
+      "R&D Spend",
+      "Administration",
+      "Marketing Spend"
+    ],
+    "numeric_medians": {
+      "R&D Spend": 75124.20999999999,
+      "Administration": 120134.70000000001,
+      "Marketing Spend": 249791.995
+    },
+    "categorical": [
+      "State"
+    ],
+    "categories": {
+      "State": [
+        "California",
+        "Florida",
+        "New York"
+      ]
+    }
+  },
+  "feature_comparison_note": "Features ranked using training-only F scores. Test curves are exploratory; do not choose a final feature count using test results. Saved model retains all features.",
+  "meets_exploratory_criterion": true,
+  "interpretation": "Improves on baseline.",
+  "limitations": "One random test split; no causal conclusions or production readiness established. Review data provenance and intended use.",
+  "reloaded_example_prediction": 126362.87908254928,
+  "title": "50 Startups",
+  "test_predictions": [
+    {
+      "row": 13,
+      "actual": 134307.35,
+      "predicted": 126362.87908254925,
+      "residual": 7944.470917450759
+    },
+    {
+      "row": 39,
+      "actual": 81005.76,
+      "predicted": 84608.45383633598,
+      "residual": -3602.6938363359804
+    },
+    {
+      "row": 30,
+      "actual": 99937.59,
+      "predicted": 99677.49425146727,
+      "residual": 260.0957485327235
+    },
+    {
+      "row": 45,
+      "actual": 64926.08,
+      "predicted": 46357.46068581843,
+      "residual": 18568.61931418157
+    },
+    {
+      "row": 17,
+      "actual": 125370.37,
+      "predicted": 128750.482885045,
+      "residual": -3380.112885045004
+    },
+    {
+      "row": 48,
+      "actual": 35673.41,
+      "predicted": 50912.41741880172,
+      "residual": -15239.007418801715
+    },
+    {
+      "row": 26,
+      "actual": 105733.54,
+      "predicted": 109741.35032702184,
+      "residual": -4007.810327021856
+    },
+    {
+      "row": 25,
+      "actual": 107404.34,
+      "predicted": 100643.2428164668,
+      "residual": 6761.097183533188
+    },
+    {
+      "row": 32,
+      "actual": 97427.84,
+      "predicted": 97599.27574593798,
+      "residual": -171.43574593798257
+    },
+    {
+      "row": 19,
+      "actual": 122776.86,
+      "predicted": 113097.42524431695,
+      "residual": 9679.434755683047
+    }
+  ],
+  "model_predictions": [
+    {
+      "row": 13,
+      "x": 91992.39,
+      "actual": 134307.35,
+      "Linear Regression": 126362.87908251512,
+      "Ridge": 126262.79928764672,
+      "LASSO": 126775.26963588198,
+      "Elastic Net": 126567.86753114578,
+      "SVR (RBF)": 135287.85607723857,
+      "SVR (Linear)": 127981.2472511938,
+      "PCA + Linear Regression": 130404.27351989018,
+      "Mutual Information + Linear": 127696.4919927905,
+      "Random Forest": 134271.9984,
+      "Gradient Boosting": 126784.21859268594
+    },
+    {
+      "row": 39,
+      "x": 38558.51,
+      "actual": 81005.76,
+      "Linear Regression": 84608.4538364344,
+      "Ridge": 84855.30579482407,
+      "LASSO": 84574.69158538204,
+      "Elastic Net": 84653.96519333858,
+      "SVR (RBF)": 92051.96944892892,
+      "SVR (Linear)": 87283.94246662087,
+      "PCA + Linear Regression": 85247.22776650298,
+      "Mutual Information + Linear": 82757.15521140856,
+      "Random Forest": 88787.42964999993,
+      "Gradient Boosting": 86718.11007549445
+    },
+    {
+      "row": 30,
+      "x": 61994.48,
+      "actual": 99937.59,
+      "Linear Regression": 99677.49425154636,
+      "Ridge": 98117.45988153489,
+      "LASSO": 99048.48669209726,
+      "Elastic Net": 99016.29057397108,
+      "SVR (RBF)": 117195.89659336011,
+      "SVR (Linear)": 99101.67387521431,
+      "PCA + Linear Regression": 79314.50328303695,
+      "Mutual Information + Linear": 97850.9657322444,
+      "Random Forest": 99905.86190000002,
+      "Gradient Boosting": 95182.73595044368
+    },
+    {
+      "row": 45,
+      "x": 1000.23,
+      "actual": 64926.08,
+      "Linear Regression": 46357.46068582477,
+      "Ridge": 46877.34466249988,
+      "LASSO": 47331.8902747969,
+      "Elastic Net": 46918.55190744258,
+      "SVR (RBF)": 71633.56137936213,
+      "SVR (Linear)": 48073.2557769751,
+      "PCA + Linear Regression": 39106.73226170325,
+      "Mutual Information + Linear": 46020.27550663137,
+      "Random Forest": 42210.76170000008,
+      "Gradient Boosting": 53126.289574848255
+    },
+    {
+      "row": 17,
+      "x": 94657.16,
+      "actual": 125370.37,
+      "Linear Regression": 128750.48288496584,
+      "Ridge": 129258.91706082056,
+      "LASSO": 129341.47466526498,
+      "Elastic Net": 129143.949817371,
+      "SVR (RBF)": 122474.14983915324,
+      "SVR (Linear)": 128038.59903308412,
+      "PCA + Linear Regression": 134766.54299763578,
+      "Mutual Information + Linear": 130446.36919476966,
+      "Random Forest": 131873.23935,
+      "Gradient Boosting": 134467.46918749146
+    },
+    {
+      "row": 48,
+      "x": 542.05,
+      "actual": 35673.41,
+      "Linear Regression": 50912.41741904591,
+      "Ridge": 50044.4524027364,
+      "LASSO": 50523.15301633439,
+      "Elastic Net": 50492.2326706997,
+      "SVR (RBF)": 86991.46525521693,
+      "SVR (Linear)": 51921.851783302656,
+      "PCA + Linear Regression": 29790.909752529507,
+      "Mutual Information + Linear": 45586.47316132378,
+      "Random Forest": 37980.76235000008,
+      "Gradient Boosting": 29249.356582433247
+    },
+    {
+      "row": 26,
+      "x": 75328.87,
+      "actual": 105733.54,
+      "Linear Regression": 109741.35032700335,
+      "Ridge": 108706.9180065488,
+      "LASSO": 109543.0213695354,
+      "Elastic Net": 109412.74941513797,
+      "SVR (RBF)": 130740.47792869352,
+      "SVR (Linear)": 109075.8524877318,
+      "PCA + Linear Regression": 96537.87143632608,
+      "Mutual Information + Linear": 109986.92532425011,
+      "Random Forest": 114877.5548,
+      "Gradient Boosting": 115660.1432673894
+    },
+    {
+      "row": 25,
+      "x": 64664.71,
+      "actual": 107404.34,
+      "Linear Regression": 100643.24281644385,
+      "Ridge": 100296.92423325407,
+      "LASSO": 101319.18636024283,
+      "Elastic Net": 100917.58978389091,
+      "SVR (RBF)": 105457.15753500703,
+      "SVR (Linear)": 103041.09063933713,
+      "PCA + Linear Regression": 98020.8955262405,
+      "Mutual Information + Linear": 101777.99690136468,
+      "Random Forest": 102582.70945,
+      "Gradient Boosting": 101988.9479640254
+    },
+    {
+      "row": 32,
+      "x": 63408.86,
+      "actual": 97427.84,
+      "Linear Regression": 97599.27574600172,
+      "Ridge": 95869.5658047577,
+      "LASSO": 97982.67383341488,
+      "Elastic Net": 97424.4685239101,
+      "SVR (RBF)": 89162.01192670365,
+      "SVR (Linear)": 99849.93379017572,
+      "PCA + Linear Regression": 80206.35970375722,
+      "Mutual Information + Linear": 97196.68858932282,
+      "Random Forest": 99617.14050000002,
+      "Gradient Boosting": 91906.4398587216
+    },
+    {
+      "row": 19,
+      "x": 86419.7,
+      "actual": 122776.86,
+      "Linear Regression": 113097.42524436556,
+      "Ridge": 110315.62964651882,
+      "LASSO": 113600.27530317988,
+      "Elastic Net": 112722.65476015274,
+      "SVR (RBF)": 107033.88116868612,
+      "SVR (Linear)": 112467.07539132232,
+      "PCA + Linear Regression": 82775.3225581528,
+      "Mutual Information + Linear": 112925.70060167147,
+      "Random Forest": 130173.34705,
+      "Gradient Boosting": 110386.60483317672
+    }
+  ],
+  "example": {
+    "R&D Spend": 91992.39,
+    "Administration": 135495.07,
+    "Marketing Spend": 252664.93,
+    "State": "California"
+  }
+}

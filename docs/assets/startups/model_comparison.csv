@@ -1,0 +1,11 @@
+Model,Features,MSE,RMSE,R2 Score
+Mutual Information + Linear,"R&D Spend, Administration, Marketing Spend, State",67943465.8066034,8242.782649482115,0.916097640352974
+Gradient Boosting,"R&D Spend, Administration, Marketing Spend, State",68696602.25561532,8288.341345264162,0.915167603528121
+LASSO,"R&D Spend, Administration, Marketing Spend, State",75215885.43697992,8672.709232816464,0.9071170392004105
+SVR (Linear),"R&D Spend, Administration, Marketing Spend, State",77765009.24455671,8818.447099379613,0.9039691647146301
+Elastic Net,"R&D Spend, Administration, Marketing Spend, State",78886782.52972175,8881.823153481595,0.9025839038290249
+Random Forest,"R&D Spend, Administration, Marketing Spend, State",79051569.42536442,8891.094950868786,0.9023804109806811
+Linear Regression,"R&D Spend, Administration, Marketing Spend, State",82010363.04501359,9055.957323497809,0.8987266414319838
+Ridge,"R&D Spend, Administration, Marketing Spend, State",84731799.39480999,9204.987745500262,0.8953659807905757
+PCA + Linear Regression,"R&D Spend, Administration, Marketing Spend, State",331737808.61837786,18213.67092648755,0.5903419909952508
+SVR (RBF),"R&D Spend, Administration, Marketing Spend, State",405305423.50216067,20132.198675310174,0.49949445460488395

@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="探索 50 Startups 與 Boston Housing 的特徵選取、多模型比較與 CRISP-DM 迴歸分析結果。">
+  <title>DIC2 · Regression Explorer</title>
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="data.js"></script><script defer src="app.js"></script>
+</head>
+<body>
+<header class="topbar"><a class="brand" href="#"><span class="brand-icon">↗</span><span>DIC2 <span class="brand-sub">/ Regression Lab</span></span></a><nav aria-label="主導覽"><a href="#features">特徵分析</a><a href="#models">模型比較</a><a href="#workflow">CRISP-DM</a><a class="repo" href="https://github.com/RyanYeh57/DIC2-50-startup-and-boston-housing" target="_blank" rel="noopener">GitHub ↗</a></nav></header>
+<main>
+  <div class="page-heading"><div><div class="eyebrow">AIoT · DATA SCIENCE · EXPERIMENT 02</div><h1>Multiple Linear Regression <span>Explorer</span></h1><p>從特徵到預測，讀懂每一次模型選擇。</p></div><span class="status"><span></span> 實際資料分析</span></div>
+  <div class="dataset-bar"><div class="dataset-tabs" role="group" aria-label="切換資料集"><button data-dataset="startups" class="active" aria-pressed="true">50 Startups <span>01</span></button><button data-dataset="boston" aria-pressed="false">Boston Housing <span>02</span></button></div><span class="run-info">80 / 20 split <i>·</i> random_state = 42</span></div>
+  <section class="hero"><div><div class="eyebrow">CRISP-DM / REGRESSION ANALYSIS</div><h2 id="hero-title">50 Startups</h2><p id="hero-description"></p><div class="hero-tags"><span id="rows-tag"></span><span id="target-tag"></span><span>5-fold cross-validation</span></div></div><div class="hero-chart" aria-hidden="true"><div class="mini-grid"></div><svg viewBox="0 0 300 130"><path d="M10 118 L55 102 L95 93 L130 70 L175 55 L220 35 L280 12" fill="none" stroke="#a5b4fc" stroke-width="3"/><g fill="#34d399"><circle cx="28" cy="112" r="4"/><circle cx="58" cy="92" r="4"/><circle cx="87" cy="97" r="4"/><circle cx="124" cy="72" r="4"/><circle cx="160" cy="66" r="4"/><circle cx="180" cy="46" r="4"/><circle cx="221" cy="37" r="4"/><circle cx="251" cy="17" r="4"/><circle cx="281" cy="23" r="4"/></g></svg><span>Explore. Compare. Understand.</span></div></section>
+  <div class="section-label">BASELINE OVERVIEW <span>全特徵線性迴歸 · 獨立測試集</span></div>
+  <section class="metrics" id="metrics" aria-label="基準模型評估指標"></section>
+
+  <section id="features" class="section"><div class="section-heading"><div><div class="eyebrow">01 / FEATURE EXPLORATION</div><h2>少一個特徵，會改變什麼？</h2><p>以訓練資料 F 分數排序，逐步增加編碼後的特徵，觀察測試表現。</p></div><a class="download" id="feature-download" download>下載 CSV ↓</a></div>
+    <div class="card feature-control"><div class="control-top"><span class="small-label">FEATURE COUNT</span><span class="method-tag">Training-only F ranking</span></div><div id="feature-buttons" class="feature-buttons" role="group" aria-label="特徵數量"></div><div class="selected-features"><span>已選取特徵</span><div id="selected-features"></div></div></div>
+    <div class="two-col"><article class="card chart-card"><div class="card-heading"><h3>RMSE by Number of Features</h3><span class="chart-tag">越低越好</span></div><div id="rmse-chart" class="chart"></div></article><article class="card chart-card"><div class="card-heading"><h3>R² by Number of Features</h3><span class="chart-tag green">越高越好</span></div><div id="r2-chart" class="chart"></div></article></div>
+    <div class="selection-summary" id="selection-summary" aria-live="polite"></div>
+    <p class="note">這是測試集的探索性比較，不能據此認定最佳特徵數或過度擬合。正式特徵選擇應透過訓練集交叉驗證；部署模型仍保留全部特徵。</p>
+    <div class="two-col predictor-grid"><article class="card"><div class="card-heading"><h3>Model Coefficients</h3><span class="chart-tag">所選特徵模型</span></div><div class="table-scroll"><table><thead><tr><th>Feature</th><th>Coefficient</th></tr></thead><tbody id="coefficients"></tbody></table></div><p class="note">係數使用原始數值單位；不同尺度的係數不宜直接比較重要性，亦不代表因果關係。</p></article><article class="card"><div class="card-heading"><h3>Live Predictor</h3><span class="chart-tag green">即時試算</span></div><p class="muted">輸入資料，使用目前特徵數的線性模型預測。</p><form id="predictor"><div id="predictor-inputs" class="predictor-inputs"></div><button class="primary-button" type="submit">計算預測 <span>↗</span></button></form><div class="prediction-result" aria-live="polite"><span id="prediction-label">預測結果</span><strong id="prediction-value">—</strong></div><p class="note">試算模型在瀏覽器執行，未重新訓練。歷史資料模型的結果僅供教學分析。</p></article></div>
+  </section>
+
+  <section id="models" class="section"><div class="section-heading"><div><div class="eyebrow">02 / MODEL COMPARISON</div><h2>同一份資料，不同的答案。</h2><p>十種模型配置，共用訓練與測試切分。點選圖例，切換預測線。</p></div><a class="download" id="model-download" download>下載 CSV ↓</a></div><article class="card"><div class="card-heading"><h3>Comparison of Regression Models</h3><span class="chart-tag">Held-out test set</span></div><div id="model-legend" class="model-legend" role="group" aria-label="顯示的模型"></div><div id="model-chart" class="chart large"></div><p class="note" id="model-chart-note"></p></article><article class="card results-card"><div class="card-heading"><h3>模型結果</h3><span class="muted">依 MSE 由小到大排序</span></div><div class="table-scroll"><table><thead><tr><th>Rank</th><th>Model</th><th>MSE</th><th>RMSE</th><th>R²</th></tr></thead><tbody id="model-table"></tbody></table></div><p class="note">此排序為本次測試集的描述性结果。模型未做系統性調參，不能視為對模型優劣的一般結論；PCA／Mutual Information 皆搭配線性迴歸。</p></article></section>
+
+  <section id="diagnostics" class="section"><div class="section-heading"><div><div class="eyebrow">03 / DIAGNOSTICS</div><h2>讓誤差也說話。</h2><p>檢視全特徵線性迴歸的預測與測試殘差。</p></div><a class="download" id="prediction-download" download>下載測試預測 ↓</a></div><div class="two-col"><article class="card chart-card"><h3>Actual vs. Predicted</h3><div id="actual-chart" class="chart"></div></article><article class="card chart-card"><h3>Residuals vs. Predicted</h3><div id="residual-chart" class="chart"></div></article></div></section>
+
+  <section id="workflow" class="section"><div class="section-heading"><div><div class="eyebrow">04 / THE PROCESS</div><h2>CRISP-DM，從問題走到應用。</h2><p>每個步驟都有可追溯的輸入、決策與產物。</p></div><a class="download" id="report-download" download>下載分析報告 ↓</a></div><div id="workflow-steps" class="workflow-steps"></div><div class="method-note"><span>i</span><div><strong>讀懂這份實驗的邊界</strong><p>固定種子、單次 80/20 切分；前處理僅在訓練資料擬合，五折交叉驗證會重新擬合完整 Pipeline。正式應用仍需資料來源審核、業務誤差門檻與模型監控。Boston Housing 為歷史教學資料，本頁不將結果作為現今房價或個人決策依據。</p></div></div></section>
+  <footer><div class="brand">DIC2 <span class="brand-sub">/ Regression Lab</span></div><span>以資料驗證假設，以結果理解模型。</span><a href="https://huanchen1107.github.io/AIoT-DIC2-MultipleLR/" target="_blank" rel="noopener">版面與互動參考 ↗</a></footer>
+</main>
+</body></html>
